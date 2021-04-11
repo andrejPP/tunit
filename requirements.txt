@@ -1,8 +1,8 @@
-torch==1.2.0
-torchvision=0.4.0
-tqdm
-opencv-python
-scipy
-matplotlib
-pillow
-tensorboardX
+pytorch==1.2.0  
+tqdm  
+opencv-python  
+scipy  
+sklearn
+matplotlib  
+pillow  
+tensorboardX 
