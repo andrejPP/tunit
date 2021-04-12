@@ -271,7 +271,6 @@ def main_worker(gpu, ngpus_per_node, args):
         validationFunc(val_loader, networks, 999, args, {'logger': logger, 'queue': queue})
         fid_ema = calcFIDBatch(args, {'VAL': val_loader, 'TRAIN': train_loader}, networks, 'EMA', train_dataset)
         fid_ema_mean = sum(fid_ema) / (len(fid_ema))
-
         print("Mean FID : [{}] ".format(fid_ema_mean))
         return
 
