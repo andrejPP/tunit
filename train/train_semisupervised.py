@@ -289,9 +289,10 @@ def trainGAN_SEMI(data_loader, networks, opts, epoch, args, additional):
 
             d_adv = d_adv_real + d_adv_fake
 
-            d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
+            d_gp = (args.w_gp/2) * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
+            d_gp_f = (args.w_gp/2) * compute_grad_gp(d_fake_logit, x_fake, is_patch=False)
 
-            d_loss = d_adv + d_gp
+            d_loss = d_adv + d_gp + d_gp_f
 
             d_opt.zero_grad()
             d_adv_real.backward(retain_graph=True)
