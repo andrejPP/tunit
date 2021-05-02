@@ -101,7 +101,11 @@ def main():
     print("PYTORCH VERSION", torch.__version__)
     args.data_dir = args.data_path
     args.start_epoch = 0
-    args.gpu = "{}".format(torch.cuda.current_device())
+    if torch.cuda.device_count() > 1:
+        args.gpu = "0,1"
+    else:
+        args.gpu = "{}".format(torch.cuda.current_device())
+
 
     assert (args.p_semi >= 0.0) and (args.p_semi <= 1.0)
 
