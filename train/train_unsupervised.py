@@ -128,6 +128,7 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             x_fake.requires_grad_()
 
             d_real_logit, _ = D(x_ref, y_ref)
+            #d_fake_logit, _ = D(x_fake.detach(), y_ref)
             d_fake_logit, _ = D(x_fake, y_ref)
 
             d_adv_real = calc_adv_loss(d_real_logit, 'd_real')
@@ -138,7 +139,7 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             #d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
 
             d_gp = (args.w_gp/2) * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
-            d_gp_f = (args.w_gp/2) * compute_grad_gp(d_fake_logit, x_fake.cuda(args.gpu), is_patch=False)
+            d_gp_f = (args.w_gp/2) * compute_grad_gp(d_fake_logit, x_fake, is_patch=False)
 
             d_loss = d_adv + d_gp
 
