@@ -12,7 +12,7 @@ import torch.utils.data
 import torch.utils.data.distributed
 from tools.utils import *
 from tools.ops import compute_grad_gp, update_average, copy_norm_params, calc_iic_loss, \
-    queue_data, dequeue_data, average_gradients, calc_adv_loss, calc_contrastive_loss, calc_recon_loss
+    queue_data, dequeue_data, average_gradients, calc_adv_loss, calc_contrastive_loss, calc_recon_loss, compute_grad_gp_wgan
 
 
 ######################
