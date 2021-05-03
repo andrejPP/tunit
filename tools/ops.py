@@ -20,12 +20,12 @@ def compute_grad_gp(d_out, x_in, is_patch=False):
     return reg
 
 
-def compute_grad_gp_wgan(D, x_real, x_fake, gpu):
+def compute_grad_gp_wgan(D, x_real, x_fake, y_ref, gpu):
     alpha = torch.rand(x_real.size(0), 1, 1, 1).cuda(gpu)
 
     x_interpolate = ((1 - alpha) * x_real + alpha * x_fake).detach()
     x_interpolate.requires_grad = True
-    d_inter_logit = D(x_interpolate)
+    d_inter_logit, _ = D(x_interpolate, y_ref)
     grad = torch.autograd.grad(d_inter_logit, x_interpolate,
                                grad_outputs=torch.ones_like(d_inter_logit), create_graph=True)[0]
 

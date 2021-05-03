@@ -136,7 +136,7 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             d_adv = d_adv_real + d_adv_fake
 
             #d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
-            d_gp = args.w_gp * compute_grad_gp_wgan(D, x_ref, x_fake, args.gpu)
+            d_gp = args.w_gp * compute_grad_gp_wgan(D, x_ref, x_fake, y_ref,  args.gpu)
 
             d_loss = d_adv + d_gp
 
