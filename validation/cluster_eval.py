@@ -83,7 +83,7 @@ def cluster_subheads_eval(args, net,
     reordered_preds = torch.zeros(num_samples,
                                   dtype=flat_predss_all.dtype).cuda(int(args.gpu))
     for pred_i, target_i in all_matches:
-        reordered_preds[flat_predss_all == pred_i] = torch.tensor(target_i).cuda(int(args.gpu))
+        reordered_preds[flat_predss_all == pred_i] = int(torch.tensor(target_i).cuda(int(args.gpu)))
     test_acc, conf_mat = _acc(reordered_preds, flat_targets_all, args.output_k, verbose=0)
 
     return {"test_accs": test_acc,

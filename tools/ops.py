@@ -66,9 +66,12 @@ def calc_iic_loss(x_out, x_tf_out, lamb=1.0, EPS=1e-10):
                                              k)  # but should be same, symmetric
 
     # avoid NaN losses. Effect will get cancelled out by p_i_j tiny anyway
-    p_i_j[(p_i_j < EPS).data] = EPS
-    p_j[(p_j < EPS).data] = EPS
-    p_i[(p_i < EPS).data] = EPS
+    #p_i_j[(p_i_j < EPS).data] = EPS
+    #p_j[(p_j < EPS).data] = EPS
+    #p_i[(p_i < EPS).data] = EPS
+    p_i_j = torch.clamp(p_i_j, min=EPS)
+    p_j = torch.clamp(p_j, min=EPS)
+    p_i = torch.clamp(p_i, min=EPS)
 
     loss = - p_i_j * (torch.log(p_i_j) \
                       - lamb * torch.log(p_j) \
