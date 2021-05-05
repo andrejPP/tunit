@@ -19,7 +19,6 @@ from tools.ops import compute_grad_gp, update_average, copy_norm_params, calc_ii
 # Fully unsupervised #
 ######################
 def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
-    print("You are now training with WGAN adversarial loss function.")
     # avg meter
     d_losses = AverageMeter()
     d_advs = AverageMeter()
