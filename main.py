@@ -444,6 +444,11 @@ def load_model(args, networks, opts):
                     else:
                         net.load_state_dict(checkpoint[name + '_state_dict'])
                         networks[name] = net
+            else:
+                for name, net in networks.items():
+                    net.load_state_dict(checkpoint[name + '_state_dict'])
+                    networks[name] = net    
+
 
             for name, opt in opts.items():
                 opt.load_state_dict(checkpoint[name.lower() + '_optimizer'])
