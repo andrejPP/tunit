@@ -124,16 +124,14 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
                 x_fake = G.decode(c_src, s_ref)
 
             x_ref.requires_grad_()
-            x_fake = x_fake.cuda(args.gpu)
-            x_fake.requires_grad_()
 
             d_real_logit, _ = D(x_ref, y_ref)
-            d_fake_logit, _ = D(x_fake, y_ref)
+            d_fake_logit, _ = D(x_fake.detach(), y_ref)
 
-            d_adv_real = calc_adv_loss(d_real_logit, 'd_real')
-            d_adv_fake = calc_adv_loss(d_fake_logit, 'd_fake')
+            #d_adv_real = calc_adv_loss(d_real_logit, 'd_real')
+            #d_adv_fake = calc_adv_loss(d_fake_logit, 'd_fake')
 
-            d_adv = d_adv_real + d_adv_fake
+            d_adv = d_fake_logit.mean() - d_real_logit.mean()  
 
             #d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
             d_gp = args.w_gp * compute_grad_gp_wgan(D, x_ref, x_fake, y_ref,  args.gpu)
@@ -160,10 +158,10 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             g_fake_logit, _ = D(x_fake, y_ref)
             g_rec_logit, _ = D(x_rec, y_org)
 
-            g_adv_fake = calc_adv_loss(g_fake_logit, 'g')
-            g_adv_rec = calc_adv_loss(g_rec_logit, 'g')
+            #g_adv_fake = calc_adv_loss(g_fake_logit, 'g')
+            #g_adv_rec = calc_adv_loss(g_rec_logit, 'g')
 
-            g_adv = g_adv_fake + g_adv_rec
+            d_adv = d_fake_logit.mean() - d_real_logit.mean()  
 
             g_imgrec = calc_recon_loss(x_rec, x_org)
 
