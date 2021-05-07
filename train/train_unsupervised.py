@@ -127,18 +127,18 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             d_real_logit, _ = D(x_ref, y_ref)
             d_fake_logit, _ = D(x_fake.detach(), y_ref)
 
-            d_adv_real = calc_adv_loss(d_real_logit, 'd_real')
-            d_adv_fake = calc_adv_loss(d_fake_logit, 'd_fake')
+            d_adv_real = torch.mean((d_fake_logit - 0)**2)
+            d_adv_fake = torch.mean((d_real_logit - 1)**2)
 
-            d_adv = d_adv_real + d_adv_fake
+            d_adv = d_adv_real + d_adv_fake 
+            d_loss = d_adv
+            #d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
 
-            d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
-
-            d_loss = d_adv + d_gp
+            #d_loss = d_adv + d_gp
 
             d_opt.zero_grad()
             d_adv_real.backward(retain_graph=True)
-            d_gp.backward()
+            #d_gp.backward()
             d_adv_fake.backward()
             if args.distributed:
                 average_gradients(D)
@@ -156,8 +156,11 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             g_fake_logit, _ = D(x_fake, y_ref)
             g_rec_logit, _ = D(x_rec, y_org)
 
-            g_adv_fake = calc_adv_loss(g_fake_logit, 'g')
-            g_adv_rec = calc_adv_loss(g_rec_logit, 'g')
+            #g_adv_fake = calc_adv_loss(g_fake_logit, 'g')
+            #g_adv_rec = calc_adv_loss(g_rec_logit, 'g')
+
+            g_adv_fake = torch.mean((g_fake_logit - 1)**2)
+            g_adv_rec = torch.mean((g_rec_logit - 1)**2)
 
             g_adv = g_adv_fake + g_adv_rec
 
@@ -197,7 +200,7 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             if epoch >= args.separated:
                 d_losses.update(d_loss.item(), x_org.size(0))
                 d_advs.update(d_adv.item(), x_org.size(0))
-                d_gps.update(d_gp.item(), x_org.size(0))
+                #d_gps.update(d_gp.item(), x_org.size(0))
 
                 g_losses.update(g_loss.item(), x_org.size(0))
                 g_advs.update(g_adv.item(), x_org.size(0))
@@ -212,7 +215,7 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
                 summary_step = epoch * args.iters + i
                 add_logs(args, logger, 'D/LOSS', d_losses.avg, summary_step)
                 add_logs(args, logger, 'D/ADV', d_advs.avg, summary_step)
-                add_logs(args, logger, 'D/GP', d_gps.avg, summary_step)
+                #add_logs(args, logger, 'D/GP', d_gps.avg, summary_step)
 
                 add_logs(args, logger, 'G/LOSS', g_losses.avg, summary_step)
                 add_logs(args, logger, 'G/ADV', g_advs.avg, summary_step)
