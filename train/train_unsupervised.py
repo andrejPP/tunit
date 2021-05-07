@@ -127,14 +127,17 @@ def trainGAN_UNSUP(data_loader, networks, opts, epoch, args, additional):
             d_real_logit, _ = D(x_ref, y_ref)
             d_fake_logit, _ = D(x_fake.detach(), y_ref)
 
-            d_adv_real = torch.mean((d_fake_logit - 0)**2)
-            d_adv_fake = torch.mean((d_real_logit - 1)**2)
+            d_adv_real = torch.mean((d_real_logit - 1)**2)
+            d_adv_fake = torch.mean((d_fake_logit - 0)**2)
+            #d_adv_real = calc_adv_loss(d_real_logit, 'd_real')
+            #d_adv_fake = calc_adv_loss(d_fake_logit, 'd_fake')
 
             d_adv = d_adv_real + d_adv_fake 
-            d_loss = d_adv
+
             #d_gp = args.w_gp * compute_grad_gp(d_real_logit, x_ref, is_patch=False)
 
             #d_loss = d_adv + d_gp
+            d_loss = d_adv
 
             d_opt.zero_grad()
             d_adv_real.backward(retain_graph=True)
