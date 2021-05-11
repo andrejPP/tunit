@@ -3,8 +3,8 @@ TUNIT: Truly Unsupervised Image-to-Image Translation
 Copyright (c) 2020-present NAVER Corp.
 MIT license 
 """
-import math
 
+import torch
 import numpy as np
 from torch import nn
 import torch.nn.functional as F
