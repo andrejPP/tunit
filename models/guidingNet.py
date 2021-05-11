@@ -26,7 +26,7 @@ except:
 class ResBlk(nn.Module):
     def __init__(self, dim_in, dim_out, actv=nn.LeakyReLU(0.2),
                  normalize=False, downsample=False):
-        super().__init__()
+        super(ResBlk, self).__init__()
         self.actv = actv
         self.normalize = normalize
         self.downsample = downsample
@@ -63,8 +63,7 @@ class ResBlk(nn.Module):
         return x
 
     def forward(self, x):
-        x = self._shortcut(x) + self._residual(x)
-        return x / math.sqrt(2)  # unit variance
+        return torch.rsqrt(torch.tensor(2.0)) * self._shortcut(x) + torch.rsqrt(torch.tensor(2.0)) * self._residual(x)
 
 class GuidingNet(nn.Module):
     def __init__(self, img_size=128, output_k={'cont': 128, 'disc': 10}, max_conv_dim=512):
@@ -89,7 +88,7 @@ class GuidingNet(nn.Module):
         self.disc = nn.Linear(max_conv_dim, output_k['disc'])
         self.cont = nn.Linear(max_conv_dim, output_k['cont'])
 
-        # self._initialize_weights()
+        self._initialize_weights()
 
     def forward(self, x, sty=False):
         x = self.features(x)
@@ -100,18 +99,15 @@ class GuidingNet(nn.Module):
         disc = self.disc(flat)
         return {'cont': cont, 'disc': disc}
 
-    # def _initialize_weights(self):
-    #     for m in self.modules():
-    #         if isinstance(m, nn.Conv2d):
-    #             nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-    #             if m.bias is not None:
-    #                 nn.init.constant_(m.bias, 0)
-    #         elif isinstance(m, nn.BatchNorm2d):
-    #             nn.init.constant_(m.weight, 1)
-    #             nn.init.constant_(m.bias, 0)
-    #         elif isinstance(m, nn.Linear):
-    #             nn.init.normal_(m.weight, 0, 0.01)
-    #             nn.init.constant_(m.bias, 0)
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
 
     def moco(self, x):
         x = self.features(x)
