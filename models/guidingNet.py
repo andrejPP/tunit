@@ -27,6 +27,7 @@ class GuidingNet(nn.Module):
         # network layers setting
         self.features = make_layers(cfg['vgg11'], True)
 
+        self.linear = nn.Linear(512, 512)
         self.disc = nn.Linear(512, output_k['disc'])
         self.cont = nn.Linear(512, output_k['cont'])
 
@@ -36,10 +37,11 @@ class GuidingNet(nn.Module):
         x = self.features(x)
         x = F.adaptive_avg_pool2d(x, (1, 1))
         flat = x.view(x.size(0), -1)
-        cont = self.cont(flat)
+        lin = self.linear(flat)
+        cont = self.cont(lin)
         if sty:
             return cont
-        disc = self.disc(flat)
+        disc = self.disc(lin)
         return {'cont': cont, 'disc': disc}
 
     def _initialize_weights(self):
@@ -59,14 +61,16 @@ class GuidingNet(nn.Module):
         x = self.features(x)
         x = F.adaptive_avg_pool2d(x, (1, 1))
         flat = x.view(x.size(0), -1)
-        cont = self.cont(flat)
+        lin = self.linear(flat)
+        cont = self.cont(lin)
         return cont
 
     def iic(self, x):
         x = self.features(x)
         x = F.adaptive_avg_pool2d(x, (1, 1))
         flat = x.view(x.size(0), -1)
-        disc = self.disc(flat)
+        lin = self.linear(flat)
+        disc = self.disc(lin)
         return disc
 
 
