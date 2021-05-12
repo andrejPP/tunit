@@ -27,8 +27,8 @@ class GuidingNet(nn.Module):
         # network layers setting
         self.features = make_layers(cfg['vgg11'], True)
 
-        self.disc = nn.Linear(512, output_k['disc'])
-        self.cont = nn.Linear(512, output_k['cont'])
+        self.disc = nn.Sequential(nn.Linear(512, 512), nn.Linear(512, output_k['disc']))
+        self.cont = nn.Sequential(nn.Linear(512, 512), nn.Linear(512, output_k['cont']))
 
         self._initialize_weights()
 
