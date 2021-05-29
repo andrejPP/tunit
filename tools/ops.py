@@ -111,7 +111,7 @@ def calc_contrastive_loss(args, query, key, queue, temp=0.07):
 
     logit = torch.cat([logit_pos.view(N, 1), logit_neg], dim=1)
 
-    loss = F.cross_entropy(logit / temp, zeros)
+    loss = F.multi_margin_loss(logit, zeros)
 
     return loss
 
