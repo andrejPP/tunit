@@ -132,7 +132,7 @@ def queue_data(data, k):
     return torch.cat([data, k], dim=0)
 
 
-def dequeue_data(data, K=1024):
+def dequeue_data(data, K=256):
     if len(data) > K:
         return data[-K:]
     else:
@@ -150,7 +150,7 @@ def initialize_queue(model_k, device, train_loader, feat_size=128):
         k = outs['cont']
         k = k.detach()
         queue = queue_data(queue, k)
-        queue = dequeue_data(queue, K=1024)
+        queue = dequeue_data(queue, K=256)
         break
     return queue
 
