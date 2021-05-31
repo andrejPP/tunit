@@ -69,11 +69,11 @@ class GuidingNet(nn.Module):
     def __init__(self, img_size=128, output_k={'cont': 128, 'disc': 10}, max_conv_dim=512):
         super(GuidingNet, self).__init__()
         # network layers setting
-        dim_in = 2 ** 14 // img_size
+        dim_in = 2 ** 13 // img_size
         blocks = []
         blocks += [nn.Conv2d(3, dim_in, 3, 1, 1)]
 
-        repeat_num = int(np.log2(img_size)) - 2
+        repeat_num = int(np.log2(img_size)) - 4
         for _ in range(repeat_num):
             dim_out = min(dim_in * 2, max_conv_dim)
             blocks += [ResBlk(dim_in, dim_out, downsample=True)]
