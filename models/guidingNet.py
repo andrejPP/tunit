@@ -85,8 +85,8 @@ class GuidingNet(nn.Module):
 
         self.features = nn.Sequential(*blocks)
 
-        self.disc = nn.Linear(max_conv_dim, output_k['disc'])
-        self.cont = nn.Linear(max_conv_dim, output_k['cont'])
+        self.disc = nn.Linear(dim_out, output_k['disc'])
+        self.cont = nn.Linear(dim_out, output_k['cont'])
 
         self._initialize_weights()
 
